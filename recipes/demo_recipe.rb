@@ -31,16 +31,16 @@ log 'Calling demo_unpack custom resource' do
 end
 
 demo_unpack 'Unpack zip file' do
-#  command 'tar -xzf'
+  command 'tar -xzf'
   source_dir_url 'file:///mwaas/temp'
-  package_name 'demo_pack.zip'
+  package_name 'demo_pack.tar.gz'
   target_dir '/tmp/demo'
-#  runas_user 'root'
-#  runas_group 'root'
-#  change_user 'root'
-#  change_group 'root'
-#  change_mode '0770'
+  runas_user "#{userid}"
+  runas_group "#{userid}"
+  change_user "#{userid}"
+  change_group "#{userid}"
+  change_mode '0770'
   force_download false
-  force_unpack false
+  force_unpack true
 end
 
