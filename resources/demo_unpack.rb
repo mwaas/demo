@@ -22,7 +22,7 @@ force_unpack = false;
  
 load_current_value do |desired|
   full_source_url = "#{desired.source_dir_url}/#{desired.package_name}";
-  puts "full_source_url is #{full_source_url}";
+  puts "\nfull_source_url is #{full_source_url}";
 
   temp_file = "#{Chef::Config[:file_cache_path]}/#{desired.package_name}";
   puts "temp_file is #{temp_file}";
@@ -58,15 +58,32 @@ end
 default_action :unpack
 
 action :unpack do
+  log "Delete temp_file #{temp_file} if force_download is true" do
+    level :info
+  end
+
   file temp_file do
     action :delete
     only_if { force_download }
   end
   
-  directory target_dir do
-    action :delete
-    recursive true
-    only_if { force_unpack }
+  log "Delete target_dir #{target_dir} if force_unpack is true" do
+    level :info
+  end
+
+#  directory target_dir do
+#    action :delete
+#    recursive true
+#    only_if { force_unpack }
+#  end
+#Deleting and recreating same directory is considered resource cloning and is deprecated in Chef - so use execute resource instead
+  execute "Delete target_dir #{target_dir} if force_unpack is true" do
+    command "rm -r #{target_dir}"
+    only_if { force_unpack && Dir.exist?(target_dir)}
+  end
+
+  log "Create target_dir #{target_dir} if it does not exist" do
+    level :info
   end
 
   directory target_dir do
@@ -83,13 +100,18 @@ action :unpack do
     not_if "File.exist?(#{temp_file})"
   end
 
-  puts "number of entries for #{target_dir} is " + Dir.entries(target_dir).size.to_s
-  puts "entries for #{target_dir} are \n" + Dir.entries(target_dir).to_s
+  puts "checking #{target_dir}"
+  if Dir.exist?(target_dir)
+    puts "number of entries for #{target_dir} is " + Dir.entries(target_dir).size.to_s
+    puts "entries for #{target_dir} are \n" + Dir.entries(target_dir).to_s
 
-  if Dir.entries(target_dir).size == 2
-    puts "#{target_dir} is empty"
+    if Dir.entries(target_dir).size == 2
+      puts "#{target_dir} is empty"
+    else
+      puts "#{target_dir} is not empty"
+    end
   else
-    puts "#{target_dir} is not empty"
+    puts "#{target_dir} does not exist"
   end
 
   execute "Unpack #{temp_file} into #{target_dir}" do

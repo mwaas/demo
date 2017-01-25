@@ -16,6 +16,5 @@ define :demo_definition do
       :param2 => 'value2'
     })
   end
-
 end
 
