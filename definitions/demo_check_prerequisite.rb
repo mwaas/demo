@@ -5,7 +5,7 @@ define :demo_check_prerequisite do
 
   ruby_block 'Verify image repository' do
     block do
-      raise 'Image repository is missing' if !File.exist?('/mwaas/images')
+      raise 'Image repository is missing' if !File.exist?('/data/mwaas/images')
     end
   end
 end

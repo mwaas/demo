@@ -38,7 +38,7 @@ end
 
 demo_unpack 'Unpack zip file' do
   command 'tar -xzf'
-  source_dir_url 'file:///mwaas/temp'
+  source_dir_url 'file:///data/mwaas/images'
   package_name 'demo_pack.tar.gz'
   target_dir '/tmp/demo/unpack'
   runas_user "#{userid}"
